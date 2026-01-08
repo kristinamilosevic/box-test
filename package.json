@@ -1,0 +1,83 @@
+{
+  "name": "box-test",
+  "version": "1.0.0",
+  "description": "Box management application with Electron, React and FastAPI",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev:backend": "../venv/bin/python -m uvicorn backend.app.main:app --reload --port 8000",
+    "dev:electron": "electron . --no-sandbox",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:electron\"",
+    "dev:build": "npm run build:react && npm run dev",
+    "build:react": "cd frontend && npm run build",
+    "build:electron": "electron-builder",
+    "build:linux:deb": "electron-builder --linux deb",
+    "build:linux:appimage": "electron-builder --linux AppImage",
+    "build:linux:tar": "electron-builder --linux tar.gz",
+    "build": "npm run build:react && npm run build:electron",
+    "start": "electron ."
+  },
+  "build": {
+    "appId": "com.box-test.app",
+    "productName": "BoxTest",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "electron/**/*",
+      "frontend/build/**/*",
+      "backend/**/*",
+      "requirements.txt",
+      "!backend/**/__pycache__",
+      "!backend/**/*.pyc"
+    ],
+    "asarUnpack": [
+      "backend/**/*",
+      "requirements.txt"
+    ],
+    "extraFiles": [
+      {
+        "from": "app.db",
+        "to": "."
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    },
+    "linux": {
+      "target": [
+        {
+          "target": "deb",
+          "arch": ["x64"]
+        },
+        {
+          "target": "AppImage",
+          "arch": ["x64"]
+        },
+        {
+          "target": "tar.gz",
+          "arch": ["x64"]
+        }
+      ],
+      "category": "Utility",
+      "maintainer": "kristina@example.com"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "build/icon.icns"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  },
+  "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1",
+    "concurrently": "^8.2.2",
+    "wait-on": "^7.2.0"
+  }
+}
+
