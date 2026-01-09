@@ -17,7 +17,7 @@ function startBackend() {
   
   if (isDev) {
     projectRoot = path.join(__dirname, '..');
-    pythonPath = path.join(projectRoot, 'venv', 'bin', 'python');
+    pythonPath = path.join(projectRoot, '.venv', 'bin', 'python');
   } else {
     const resourcesPath = process.resourcesPath || path.join(process.execPath, '..', '..', 'resources');
     projectRoot = path.join(resourcesPath, 'app.asar.unpacked');
@@ -41,10 +41,7 @@ function startBackend() {
   }
   
   backendProcess = spawn(pythonPath, [
-    '-m', 'uvicorn',
-    'backend.app.main:app',
-    '--host', '127.0.0.1',
-    '--port', '8000'
+    '-m', 'backend.app.main'
   ], {
     cwd: projectRoot,
     env: envVars

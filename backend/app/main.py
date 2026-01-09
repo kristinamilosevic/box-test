@@ -1,41 +1,43 @@
-from fastapi import FastAPI, Depends, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
 from dotenv import load_dotenv
-import os
-
-from .database import Base, engine, SessionLocal
-from . import models, schemas
-
 load_dotenv()
 
-Base.metadata.create_all(bind=engine)
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+import uvicorn
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from .routers import status_router, box_router
+from .db.database import Base, engine
+from .models import BoxModel  # Import models so they're registered with Base
+from .config import config
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Create database tables on startup
+    Base.metadata.create_all(bind=engine)
+
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], 
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+app.include_router(status_router.router)
+app.include_router(box_router.router)
 
-@app.post("/boxes", response_model=schemas.Box)
-def create_box(box: schemas.BoxCreate, db: Session = Depends(get_db)):
-    db_box = models.Box(**box.dict())
-    db.add(db_box)
-    db.commit()
-    db.refresh(db_box)
-    return db_box
 
-@app.get("/boxes", response_model=list[schemas.Box])
-def list_boxes(db: Session = Depends(get_db)):
-    return db.query(models.Box).all()
+if __name__ == "__main__":
+    uvicorn.run(
+        app, 
+        host=config.BACKEND_HOST, 
+        port=config.BACKEND_PORT
+    )

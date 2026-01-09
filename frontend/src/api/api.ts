@@ -1,4 +1,4 @@
-const BASE_URL = "http://127.0.0.1:8000"; 
+const BASE_URL = "http://127.0.0.1:8080"; 
 
 export interface BoxItem {
   id: number;
@@ -6,6 +6,8 @@ export interface BoxItem {
   length: number;
   width: number;
   height: number;
+  label: string;
+  weight: number;
 }
 
 export interface BoxCreate {
@@ -13,6 +15,8 @@ export interface BoxCreate {
   length: number;
   width: number;
   height: number;
+  label: string;
+  weight: number;
 }
 
 export const fetchItems = async (): Promise<BoxItem[]> => {

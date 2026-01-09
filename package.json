@@ -4,9 +4,9 @@
   "description": "Box management application with Electron, React and FastAPI",
   "main": "electron/main.js",
   "scripts": {
-    "dev:backend": "../venv/bin/python -m uvicorn backend.app.main:app --reload --port 8000",
+    "dev:backend": ".venv/bin/python -m backend.app.main",
     "dev:electron": "electron . --no-sandbox",
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:electron\"",
+    "dev": "npm run dev:electron",
     "dev:build": "npm run build:react && npm run dev",
     "build:react": "cd frontend && npm run build",
     "build:electron": "electron-builder",
