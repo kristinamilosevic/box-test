@@ -1,6 +1,4 @@
-# Box Test
-
-Desktop application for managing boxes, built with Electron, React, and FastAPI.
+Desktop application built with Electron, React, and FastAPI.
 
 ## Running Locally
 
