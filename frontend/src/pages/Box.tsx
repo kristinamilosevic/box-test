@@ -13,8 +13,8 @@ const Box: React.FC = () => {
     length: 0,
     width: 0,
     height: 0,
-    label: "No",
     weight: 0,
+    label: "No",
   });
 
   const loadItems = async () => {
@@ -37,11 +37,15 @@ const Box: React.FC = () => {
     loadItems();
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: name === "name" ? value : parseFloat(value) || 0,
+      [name]: name === "name" || name === "label" 
+        ? value 
+        : name === "weight"
+        ? Number(value) || 0
+        : parseInt(value, 10) || 0,
     }));
   };
 
@@ -51,7 +55,14 @@ const Box: React.FC = () => {
     setError(null);
 
     try {
-      await createBox(formData);
+      const boxData: BoxCreate = {
+        ...formData,
+        length: Math.floor(formData.length),
+        width: Math.floor(formData.width),
+        height: Math.floor(formData.height),
+        weight: Math.floor(formData.weight),
+      };
+      await createBox(boxData);
       setFormData({
         name: "",
         length: 0,
@@ -60,6 +71,7 @@ const Box: React.FC = () => {
         label: "No",
         weight: 0,
       });
+
       await loadItems();
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : "Failed to create box";
@@ -146,7 +158,7 @@ const Box: React.FC = () => {
               </label>
               <input
                 type="number"
-                name="weigth"
+                name="weight"
                 value={formData.weight}
                 onChange={handleInputChange}
                 required
@@ -159,14 +171,17 @@ const Box: React.FC = () => {
               <label className="block mb-2 font-semibold">
                 Label:
               </label>
-              <input
-                type="text"
+              <select
                 name="label"
                 value={formData.label}
                 onChange={handleInputChange}
                 required
                 className="w-full p-2 text-sm border border-gray-300 rounded"
-              />
+              >
+                <option value="No">No</option>
+                <option value="Up">Up</option>
+                <option value="Down">Down</option>
+              </select>
             </div>
           </div>
           <Button 

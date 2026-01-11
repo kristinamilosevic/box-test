@@ -43,10 +43,10 @@ export const fetchItems = async (): Promise<BoxItem[]> => {
   } catch (error) {
     console.error("Error fetching items:", error);
     if (error instanceof Error && error.name === 'AbortError') {
-      throw new Error('Backend is not responding. Please check if the backend is running.');
+      throw new Error(`Backend is not responding. Please check if the backend is running on ${BASE_URL}`);
     }
     if (error instanceof TypeError && error.message.includes('fetch')) {
-      throw new Error('Cannot connect to backend. Please check if the backend is running on http://127.0.0.1:8000');
+      throw new Error(`Cannot connect to backend. Please check if the backend is running on ${BASE_URL}`);
     }
     throw error;
   }
@@ -60,7 +60,7 @@ export const createBox = async (box: BoxCreate): Promise<BoxItem> => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(box),
-    }, 5000);
+    });
     if (!res.ok) {
       const errorText = await res.text();
       throw new Error(`Network response was not ok: ${res.status} ${errorText}`);
@@ -70,10 +70,10 @@ export const createBox = async (box: BoxCreate): Promise<BoxItem> => {
   } catch (error) {
     console.error("Error creating box:", error);
     if (error instanceof Error && error.name === 'AbortError') {
-      throw new Error('Backend is not responding. Please check if the backend is running.');
+      throw new Error(`Backend is not responding. Please check if the backend is running on ${BASE_URL}`);
     }
     if (error instanceof TypeError && error.message.includes('fetch')) {
-      throw new Error('Cannot connect to backend. Please check if the backend is running on http://127.0.0.1:8000');
+      throw new Error(`Cannot connect to backend. Please check if the backend is running on ${BASE_URL}`);
     }
     throw error;
   }

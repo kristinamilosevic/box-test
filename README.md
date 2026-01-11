@@ -14,8 +14,8 @@ Desktop application for managing boxes, built with Electron, React, and FastAPI.
 Python version >= 3.10 for uvicorn >= 0.40.0
 1. **Install Python dependencies:**
    ```bash
-   python3 -m venv venv
-   source venv/bin/activate
+   python3 -m venv .venv
+   source .venv/bin/activate
    pip install -r requirements.txt
    ```
 
@@ -37,45 +37,11 @@ cp .env.example .env (root dir)
 
 npm run build before running npm run dev
 
-**Option 1: Run everything together (recommended):**
+**Run everything together (recommended):**
 ```bash
 npm run dev
-```
+``` 
 
-This will automatically start:
-- Backend (FastAPI) on http://127.0.0.1:8000
-- Electron desktop app 
-
-**Option 2: Run separately (for debugging):**
-```bash
-# Terminal 1: Backend
-npm run dev:backend
-
-# Terminal 2: Electron
-npm run dev:electron
-```
-
-The Electron app will open automatically. The backend runs in the background.
-```
-
-## Project Structure
-
-```
-box-test/
-├── backend/          # FastAPI backend
-│   └── app/
-├── frontend/         # React frontend
-│   └── src/
-├── electron/         # Electron main process
-│   └── main.js
-├── venv/             # Python virtual environment
-└── package.json      # Root package.json
-```
-
-## API Endpoints
-
-- `GET /boxes` - List all boxes
-- `POST /boxes` - Create a new box
 
 ## Build for Production
 
@@ -83,7 +49,7 @@ box-test/
 
 1. **Install Python dependencies:**
    ```bash
-   source venv/bin/activate
+   source .venv/bin/activate
    pip install -r requirements.txt
    ```
 
