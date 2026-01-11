@@ -11,6 +11,48 @@ let backendProcess;
 
 const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
 
+function waitForBackend(maxAttempts = 30, delay = 500) {
+  return new Promise((resolve, reject) => {
+    const http = require('http');
+    let attempts = 0;
+
+    const checkBackend = () => {
+      attempts++;
+      const req = http.get('http://127.0.0.1:8000/boxes', (res) => {
+        if (res.statusCode === 200 || res.statusCode === 404) {
+          console.log('Backend is ready!');
+          resolve();
+        } else {
+          if (attempts < maxAttempts) {
+            setTimeout(checkBackend, delay);
+          } else {
+            reject(new Error('Backend failed to start'));
+          }
+        }
+      });
+
+      req.on('error', () => {
+        if (attempts < maxAttempts) {
+          setTimeout(checkBackend, delay);
+        } else {
+          reject(new Error('Backend failed to start'));
+        }
+      });
+
+      req.setTimeout(1000, () => {
+        req.destroy();
+        if (attempts < maxAttempts) {
+          setTimeout(checkBackend, delay);
+        } else {
+          reject(new Error('Backend failed to start'));
+        }
+      });
+    };
+
+    setTimeout(checkBackend, 1000);
+  });
+}
+
 function startBackend() {
   let projectRoot;
   let pythonPath;
@@ -61,6 +103,8 @@ function startBackend() {
   backendProcess.on('close', (code) => {
     console.log(`Backend process exited with code ${code}`);
   });
+
+  return waitForBackend();
 }
 
 function createWindow() {
@@ -73,20 +117,13 @@ function createWindow() {
     }
   });
 
-  setTimeout(() => {
-    let htmlPath;
-    if (isDev) {
-      htmlPath = path.join(__dirname, '..', 'frontend', 'build', 'index.html');
-      win.loadFile(htmlPath);
-    } else {
-      const resourcesPath = process.resourcesPath || path.join(process.execPath, '..', '..', 'resources');
-      htmlPath = path.join(resourcesPath, 'app.asar', 'frontend', 'build', 'index.html');
-      win.loadURL(`file://${htmlPath}`);
-    }
-  }, 2000);
-
   if (isDev) {
+    win.loadURL('http://localhost:3000');
     win.webContents.openDevTools();
+  } else {
+    const resourcesPath = process.resourcesPath || path.join(process.execPath, '..', '..', 'resources');
+    const htmlPath = path.join(resourcesPath, 'app.asar', 'frontend', 'build', 'index.html');
+    win.loadFile(htmlPath);
   }
   
   win.on('closed', () => {
@@ -94,9 +131,14 @@ function createWindow() {
   });
 }
 
-app.on('ready', () => {
-  startBackend();
-  createWindow();
+app.on('ready', async () => {
+  try {
+    await startBackend();
+    createWindow();
+  } catch (error) {
+    console.error('Failed to start backend:', error);
+    createWindow();
+  }
 });
 
 app.on('window-all-closed', () => {

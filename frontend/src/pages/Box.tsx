@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { fetchItems, createBox, BoxItem, BoxCreate } from "../api/api";
+import { Button } from "@/components/ui/button";
 
 const Box: React.FC = () => {
   const [items, setItems] = useState<BoxItem[]>([]);
@@ -136,17 +137,12 @@ const Box: React.FC = () => {
               />
             </div>
           </div>
-          <button 
+          <Button 
             type="submit" 
             disabled={submitting}
-            className={`px-5 py-2.5 text-base text-white rounded ${
-              submitting 
-                ? "bg-green-400 cursor-not-allowed opacity-60" 
-                : "bg-green-500 hover:bg-green-600 cursor-pointer"
-            }`}
           >
             {submitting ? "Creating..." : "Create Box"}
-          </button>
+          </Button>
         </form>
       </div>
 
