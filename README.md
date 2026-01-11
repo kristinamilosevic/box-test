@@ -11,6 +11,7 @@ Desktop application for managing boxes, built with Electron, React, and FastAPI.
 
 ### Step 2: Setup
 
+Python version >= 3.10 for uvicorn >= 0.40.0
 1. **Install Python dependencies:**
    ```bash
    python3 -m venv venv
@@ -31,6 +32,10 @@ Desktop application for managing boxes, built with Electron, React, and FastAPI.
    ```
 
 ### Step 3: Run the Application
+
+cp .env.example .env (root dir)
+
+npm run build before running npm run dev
 
 **Option 1: Run everything together (recommended):**
 ```bash

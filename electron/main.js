@@ -3,8 +3,6 @@ const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const path = require("path");
 const { spawn } = require("child_process");
-const os = require("os");
-const fs = require("fs");
 
 let win;
 let backendProcess;
@@ -59,7 +57,7 @@ function startBackend() {
   
   if (isDev) {
     projectRoot = path.join(__dirname, '..');
-    pythonPath = path.join(projectRoot, 'venv', 'bin', 'python');
+    pythonPath = path.join(projectRoot, '.venv', 'bin', 'python');
   } else {
     const resourcesPath = process.resourcesPath || path.join(process.execPath, '..', '..', 'resources');
     projectRoot = path.join(resourcesPath, 'app.asar.unpacked');
@@ -69,27 +67,11 @@ function startBackend() {
   console.log('Project root:', projectRoot);
   console.log('Python path:', pythonPath);
   
-  let envVars = { ...process.env, PYTHONUNBUFFERED: '1' };
-  if (!isDev) {
-    const userHome = process.env.HOME || process.env.USERPROFILE || os.homedir();
-    const dbPath = path.join(userHome, '.box-test', 'app.db');
-    const dbDir = path.dirname(dbPath);
-    if (!fs.existsSync(dbDir)) {
-      fs.mkdirSync(dbDir, { recursive: true });
-    }
-    envVars.DATABASE_URL = `sqlite:///${dbPath}`;
-    console.log('Database path:', dbPath);
-    console.log('DATABASE_URL:', envVars.DATABASE_URL);
-  }
-  
   backendProcess = spawn(pythonPath, [
-    '-m', 'uvicorn',
-    'backend.app.main:app',
-    '--host', '127.0.0.1',
-    '--port', '8000'
+    '-m', 'backend.app.main'
   ], {
     cwd: projectRoot,
-    env: envVars
+    env: { ...process.env, PYTHONUNBUFFERED: '1' }
   });
 
   backendProcess.stdout.on('data', (data) => {

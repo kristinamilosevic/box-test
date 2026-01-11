@@ -13,6 +13,8 @@ const Box: React.FC = () => {
     length: 0,
     width: 0,
     height: 0,
+    label: "No",
+    weight: 0,
   });
 
   const loadItems = async () => {
@@ -55,6 +57,8 @@ const Box: React.FC = () => {
         length: 0,
         width: 0,
         height: 0,
+        label: "No",
+        weight: 0,
       });
       await loadItems();
     } catch (err) {
@@ -93,7 +97,7 @@ const Box: React.FC = () => {
           <div className="grid grid-cols-3 gap-4 mb-4">
             <div>
               <label className="block mb-2 font-semibold">
-                Length:
+                Length (mm):
               </label>
               <input
                 type="number"
@@ -108,7 +112,7 @@ const Box: React.FC = () => {
             </div>
             <div>
               <label className="block mb-2 font-semibold">
-                Width:
+                Width (mm):
               </label>
               <input
                 type="number"
@@ -123,7 +127,7 @@ const Box: React.FC = () => {
             </div>
             <div>
               <label className="block mb-2 font-semibold">
-                Height:
+                Height (mm):
               </label>
               <input
                 type="number"
@@ -133,6 +137,34 @@ const Box: React.FC = () => {
                 required
                 min="0"
                 step="0.01"
+                className="w-full p-2 text-sm border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block mb-2 font-semibold">
+                Weight (kg):
+              </label>
+              <input
+                type="number"
+                name="weigth"
+                value={formData.weight}
+                onChange={handleInputChange}
+                required
+                min="0"
+                step="0.01"
+                className="w-full p-2 text-sm border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block mb-2 font-semibold">
+                Label:
+              </label>
+              <input
+                type="text"
+                name="label"
+                value={formData.label}
+                onChange={handleInputChange}
+                required
                 className="w-full p-2 text-sm border border-gray-300 rounded"
               />
             </div>
